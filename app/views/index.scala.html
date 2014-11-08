@@ -2,6 +2,8 @@
 
 @main("Welcome to Play") {
 
+    <h1>@twitter.TweetSourcing.msgQueue.take()</h1>
+
     @helper.form(routes.Application.register) {
         @helper.inputText(registrationForm("fullName"))
         @helper.inputText(registrationForm("email"))
