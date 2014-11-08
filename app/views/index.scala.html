@@ -1,8 +1,43 @@
 @(registrationForm: Form[controllers.Application.Registration])
 
 @main("Welcome to Play") {
+    <script type="text/javascript">
+    function WebSocketTest ( ) {
+    if ( "WebSocket" in window ) {
+    console.log ( "WebSocket is supported by your Browser!" ) ;
+    // Let us open a web socket
+    var ws = new WebSocket ( "ws://localhost:9000/live/tweets" ) ;
+    ws.onopen = function ( ) {
+    // Web Socket is connected, send data using send()
+    console.log( "Connected to server." ) ;
+    } ;
+    ws.onmessage = function ( tweet ) {
+        var receivedMsg = tweet.data ;
+        var tweetsDom = document.getElementById("tweets");
+        var node=document.createElement("LI");
+        var textnode=document.createTextNode(receivedMsg);
+        node.appendChild(textnode);
+        tweetsDom.appendChild(node);
+    } ;
+    ws.onclose = function ( ) {
+    // websocket is closed.
+    alert ( "Connection is closed..." ) ;
+    } ;
+    }
+    else {
+    // The browser doesn't support WebSocket
+    alert ( "WebSocket NOT supported by your Browser!" ) ;
+    }
+    }
+        document.onload = function(){
+           WebSocketTest();
+        };
+    </script>
 
-    <h1>@twitter.TweetSourcing.msgQueue.take()</h1>
+    <div>
+        <ul id="tweets">
+        </ul>
+    </div>
 
     @helper.form(routes.Application.register) {
         @helper.inputText(registrationForm("fullName"))

@@ -1,11 +1,13 @@
 package controllers
 
+import akka.actor.Props
 import anorm._
 import play.api.Play.current
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.DB
 import play.api.mvc._
+import twitter.TwitterWebsocketActor
 
 object Application extends Controller {
 
@@ -27,6 +29,10 @@ object Application extends Controller {
     )(Registration)(Registration.unapply)
   )
 
+
+  def liveTweets = WebSocket.acceptWithActor[String, String] { request => out =>
+    Props(new TwitterWebsocketActor(out))
+  }
 
   def index = Action {
 //    registration.fill()
