@@ -12,6 +12,7 @@ import play.api.Logger
 import scala.collection.JavaConversions._
 
 object TweetSourcing {
+
   /** Set up your blocking queues: Be sure to size these properly based on expected TPS of your stream */
   val msgQueue = new LinkedBlockingQueue[String](100000)
 
@@ -25,7 +26,9 @@ object TweetSourcing {
   hosebirdEndpoint.trackTerms(terms)
 
   // These secrets should be read from a config file
-  val hosebirdAuth = new OAuth1("", "", "", "")
+  private def fromConfig(key: String) = play.api.Play.current.configuration.getString(key).getOrElse(throw new IllegalStateException(s"$key not found in configuration!"))
+
+  val hosebirdAuth = new OAuth1(fromConfig("twitter.consumer.key"), fromConfig("twitter.consumer.secret"), fromConfig("twitter.token.key"), fromConfig("twitter.token.secret"))
 
   val builder = new ClientBuilder()
     .name("Hosebird-Client-01")                              // optional: mainly for the logs
