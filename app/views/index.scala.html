@@ -1,0 +1,12 @@
+@(registrationForm: Form[controllers.Application.Registration])
+
+@main("Welcome to Play") {
+
+    @helper.form(routes.Application.register) {
+        @helper.inputText(registrationForm("fullName"))
+        @helper.inputText(registrationForm("email"))
+        @helper.inputPassword(registrationForm("password"))
+        <button type="submit" value="Register">Register</button>
+    }
+
+}
