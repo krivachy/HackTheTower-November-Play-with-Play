@@ -1,6 +1,6 @@
 package twitter
 
-import java.util.concurrent.{Executors, LinkedBlockingQueue}
+import java.util.concurrent.{Executors, LinkedBlockingQueue, TimeUnit}
 
 import com.twitter.hbc.ClientBuilder
 import com.twitter.hbc.core.endpoint.StatusesFilterEndpoint
@@ -40,7 +40,7 @@ object TweetSourcing {
 
   val queueChecker = new Runnable {
     override def run(): Unit = {
-      while(!hosebirdClient.isDone) {
+      if(!hosebirdClient.isDone) {
         var msg = msgQueue.poll()
         while(msg != null) {
           ActorDirectory.tweetActor match {
@@ -54,8 +54,8 @@ object TweetSourcing {
     }
   }
 
-  val threadPool = Executors.newSingleThreadExecutor()
+  val threadPool = Executors.newScheduledThreadPool(1)
 
-  threadPool.submit(queueChecker)
+  threadPool.scheduleAtFixedRate(queueChecker, 0L, 300L, TimeUnit.MILLISECONDS)
 
 }
